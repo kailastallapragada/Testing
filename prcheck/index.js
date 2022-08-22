@@ -10,10 +10,10 @@ async function run() {
     const { context = {} } = github;
     const { pull_request } = context.payload;
 
-    await octokit.request(`POST /repos/${REPOSITORY}/issues/${PR}/labels`)
-    await octokit.issues.createLabel({
-        ...context.repo,
-        issue_number: pull_request.number,
+    console.log("repo:", context.repo);
+    console.log("number:", pull_request.number);
+
+    await octokit.request(`POST /repos/${REPOSITORY}/issues/${PR}/labels`, {
         labels: ["ForceMerged"]
     });
 }
