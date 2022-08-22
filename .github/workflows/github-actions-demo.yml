@@ -10,7 +10,7 @@ jobs:
     if: github.event.pull_request.merged == true
     steps:
       - id: 'reviews'
-        uses: 'jrylan/github-action-reviews-counter:@main'
+        uses: 'jrylan/github-action-reviews-counter@main'
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
       - if: steps.reviews.outputs.approved >= 1 && steps.reviews.outputs.changes_requested == 0
