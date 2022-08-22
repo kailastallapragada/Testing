@@ -13,20 +13,10 @@ jobs:
         uses: 'jrylan/github-action-reviews-counter@main'
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
-      - if: steps.reviews.outputs.approved >= 1 && steps.reviews.outputs.changes_requested == 0
-        run: echo "Does not have approvals"
-      - if: steps.reviews.outputs.approved == 0
-        run: |
-          curl --location --request POST 'https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/labels' \
-          --header 'Accept: application/vnd.github.v3+json' \
-          --header 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-          --header 'Content-Type: application/json' \
-          --data-raw '{
-              "labels": ["ForceMerged"]
-          }'
       - name: Check out repository code
         uses: actions/checkout@v3
-      - uses: ./prcheck/
+      - if: steps.reviews.outputs.approved < 2 || steps.reviews.outputs.changes_requested != 0
+        uses: ./prcheck/
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
