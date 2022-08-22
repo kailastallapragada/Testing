@@ -10,11 +10,18 @@ jobs:
     if: github.event.pull_request.merged == true
     steps:
       - id: 'reviews'
-        uses: 'jrylan/github-action-reviews-counter@main'
+        uses: 'jrylan/github-action-reviews-counter:@main'
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
       - if: steps.reviews.outputs.approved >= 1 && steps.reviews.outputs.changes_requested == 0
-        run: echo "Has approvals"
+        run: |
+          curl --location --request POST 'https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/labels' \
+          --header 'Accept: application/vnd.github.v3+json' \
+          --header 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+          --header 'Content-Type: application/json' \
+          --data-raw '{
+              "labels": ["ForceMerged"]
+          }'
       - if: steps.reviews.outputs.approved == 0
         run: echo "Does not have approvals"
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
