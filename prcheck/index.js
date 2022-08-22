@@ -8,6 +8,8 @@ async function run() {
     const { context = {} } = github;
     const { pull_request } = context.payload;
 
+    console.log(`POST /repos/${context.repo.owner}/${context.repo.repo}/issues/${pull_request.number}/labels`);
+
     await octokit.request(`POST /repos/${context.repo.owner}/${context.repo.repo}/issues/${pull_request.number}/labels`, {
         labels: ["ForceMerged"]
     });
