@@ -1,0 +1,11 @@
+{
+  "name": "prcheck",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "ncc build index.js -o dist"
+  },
+  "dependencies": {
+    "@vercel/ncc": "^0.34.0"
+  }
+}
