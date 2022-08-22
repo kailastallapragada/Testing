@@ -1,8 +1,15 @@
 name: 'PR Post Merge Actions'
+description: 'PR Post Merge Actions'
 
 inputs:
   GITHUB_TOKEN:
     description: 'GitHub Token'
+    required: true
+  REPOSITORY:
+    description: 'Repository'
+    required: true
+  PR:
+    description: 'Pull Request Number'
     required: true
 
 runs:
