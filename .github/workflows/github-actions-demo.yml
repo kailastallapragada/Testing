@@ -14,6 +14,8 @@ jobs:
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
       - if: steps.reviews.outputs.approved >= 1 && steps.reviews.outputs.changes_requested == 0
+        run: echo "Does not have approvals"
+      - if: steps.reviews.outputs.approved == 0
         run: |
           curl --location --request POST 'https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/labels' \
           --header 'Accept: application/vnd.github.v3+json' \
@@ -22,8 +24,6 @@ jobs:
           --data-raw '{
               "labels": ["ForceMerged"]
           }'
-      - if: steps.reviews.outputs.approved == 0
-        run: echo "Does not have approvals"
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
