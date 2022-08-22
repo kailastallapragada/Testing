@@ -9669,17 +9669,14 @@ const github = __nccwpck_require__(5438);
 
 async function run() {
     const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN');
-    const REPOSITORY = core.getInput('REPOSITORY');
-    const PR = core.getInput('PR');
     const octokit = github.getOctokit(GITHUB_TOKEN);
 
     const { context = {} } = github;
     const { pull_request } = context.payload;
 
-    console.log("repo:", context.repo);
-    console.log("number:", pull_request.number);
+    console.log(`POST /repos/${context.repo.owner}/${context.repo.repo}/issues/${pull_request.number}/labels`);
 
-    await octokit.request(`POST /repos/${REPOSITORY}/issues/${PR}/labels`, {
+    await octokit.request(`POST /repos/${context.repo.owner}/${context.repo.repo}/issues/${pull_request.number}/labels`, {
         labels: ["ForceMerged"]
     });
 }
