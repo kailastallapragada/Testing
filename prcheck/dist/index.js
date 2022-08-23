@@ -9691,7 +9691,7 @@ async function run() {
         await applyForceMergedLabel(octokit, context, pull_request);
     }
 
-    const checkRuns = await getAllPages(octokit, `GET /repos/${context.repo.owner}/${context.repo.repo}/commits/${sha}/check-runs`, {}, response => response.check_runs);
+    const checkRuns = await getAllPages(octokit, `GET /repos/${context.repo.owner}/${context.repo.repo}/commits/${sha}/check-runs`, {}, response => response.data.check_runs);
     console.log(checkRuns);
     if (Array.from(checkRuns).some(run => run.conclusion !== "success")) {
         await applyForceMergedLabel(octokit, context, pull_request);
