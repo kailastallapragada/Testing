@@ -15,12 +15,6 @@ jobs:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
       - name: Check out repository code
         uses: actions/checkout@v3
-      - if: steps.reviews.outputs.approved < 2 || steps.reviews.outputs.changes_requested != 0
-        uses: ./prcheck/
-        with:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-          FORCE_MERGED: '1'
-      - if: steps.reviews.outputs.approved >= 2 && steps.reviews.outputs.changes_requested == 0
-        uses: ./prcheck/
+      - uses: ./prcheck/
         with:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
