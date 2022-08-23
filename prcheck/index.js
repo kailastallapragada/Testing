@@ -21,6 +21,7 @@ async function run() {
             finalStatus.set(status.context, status.state);
         }
     }
+    console.log(finalStatus);
     if (Array.from(finalStatus.values()).some(status => status !== "success")) {
         await applyForceMergedLabel(octokit, context, pull_request);
     }
