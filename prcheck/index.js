@@ -13,7 +13,9 @@ async function run() {
         return await applyForceMergedLabel(octokit, context, pull_request);
     }
 
-    const sha = github.event.pull_request.head.sha;
+    console.log(github, pull_request);
+
+    const sha = github.sha;
     const statuses = await getAllPages(octokit, `GET /repos/freshdesk/collab-vienna/statuses/${sha}`);
     const finalStatus = new Map();
     for (const status of statuses) {
