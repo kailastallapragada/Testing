@@ -5,6 +5,9 @@ inputs:
   GITHUB_TOKEN:
     description: 'GitHub Token'
     required: true
+  FORCE_MERGED:
+    description: 'Force Merged'
+    required: false
 
 runs:
   using: 'node12'
