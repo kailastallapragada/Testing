@@ -9682,7 +9682,7 @@ async function run() {
     console.log(github, pull_request);
 
     const sha = context.sha;
-    const statuses = await getAllPages(octokit, `GET /repos/freshdesk/collab-vienna/statuses/${sha}`);
+    const statuses = await getAllPages(octokit, `GET /repos/${context.repo.owner}/${context.repo.repo}/statuses/${sha}`);
     const finalStatus = new Map();
     for (const status of statuses) {
         if (!finalStatus.has(status.context)) {
