@@ -11,7 +11,17 @@ async function run() {
 
     if (FORCE_MERGED == '1') {
         return await applyForceMergedLabel(octokit, context, pull_request);
-    } else if (!await getCombinedSuccess(octokit, { owner: context.repo.owner, repo: context.repo.repo, pull_number: pull_request.number })) {
+    }
+
+    const sha = github.event.pull_request.head.sha;
+    const statuses = await getAllPages(octokit, `GET /repos/freshdesk/collab-vienna/statuses/${sha}`);
+    const finalStatus = new Map();
+    for (const status of statuses) {
+        if (!finalStatus.has(status.context)) {
+            finalStatus.set(status.context, status.state);
+        }
+    }
+    if (Array.from(finalStatus.values()).some(status => status !== "success")) {
         await applyForceMergedLabel(octokit, context, pull_request);
     }
 }
@@ -22,30 +32,19 @@ async function applyForceMergedLabel(octokit, context, pull_request) {
     });
 }
 
-const QUERY = `query($owner: String!, $repo: String!, $pull_number: Int!) {
-  repository(owner: $owner, name:$repo) {
-    pullRequest(number:$pull_number) {
-      commits(last: 1) {
-        nodes {
-          commit {
-            statusCheckRollup {
-              state
-            }
-          }
-        }
-      }
+async function getAllPages(octokit, requestUrl, requestParams) {
+    let response;
+    let allResults = [];
+    if (!requestParams) {
+        requestParams = {};
     }
-  }
-}`
-
-async function getCombinedSuccess(octokit, { owner, repo, pull_number}) {
-    const result = await octokit.graphql(QUERY, { owner, repo, pull_number });
-    const [{ commit: lastCommit }] = result.repository.pullRequest.commits.nodes;
-    if (lastCommit.statusCheckRollup === null) {
-        return false;
-    } else {
-        return lastCommit.statusCheckRollup.state === "SUCCESS"
-    }
+    let page = 1;
+    do {
+        response = await octokit.request(requestUrl, { ...requestParams, per_page: 100, page });
+        allResults = [...allResults, ...response.data];
+        page = page + 1;
+    } while (response.data.length === 100);
+    return allResults;
 }
 
 run();
