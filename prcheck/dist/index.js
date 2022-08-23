@@ -9681,7 +9681,7 @@ async function run() {
 
     console.log(github, pull_request);
 
-    const sha = github.sha;
+    const sha = github.context.sha;
     const statuses = await getAllPages(octokit, `GET /repos/freshdesk/collab-vienna/statuses/${sha}`);
     const finalStatus = new Map();
     for (const status of statuses) {
