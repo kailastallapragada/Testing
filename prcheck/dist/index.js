@@ -9678,9 +9678,6 @@ async function run() {
     if (FORCE_MERGED == '1') {
         return await applyForceMergedLabel(octokit, context, pull_request);
     }
-
-    console.log(github, pull_request);
-
     const sha = context.sha;
     const statuses = await getAllPages(octokit, `GET /repos/${context.repo.owner}/${context.repo.repo}/statuses/${sha}`);
     const finalStatus = new Map();
