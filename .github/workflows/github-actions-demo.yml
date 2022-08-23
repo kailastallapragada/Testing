@@ -21,5 +21,6 @@ jobs:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
           FORCE_MERGED: '1'
       - if: !(steps.reviews.outputs.approved < 2 || steps.reviews.outputs.changes_requested != 0)
+        uses: ./prcheck/
         with:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
