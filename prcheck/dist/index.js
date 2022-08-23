@@ -9693,6 +9693,12 @@ async function run() {
     if (Array.from(finalStatus.values()).some(status => status !== "success")) {
         await applyForceMergedLabel(octokit, context, pull_request);
     }
+
+    const checkRuns = await getAllPages(octokit, `GET /repos/${context.repo.owner}/${context.repo.repo}/commits/${sha}/check-runs`, {}, response => response.check_runs);
+    console.log(checkRuns);
+    if (Array.from(checkRuns).some(run => run.conclusion !== "success")) {
+        await applyForceMergedLabel(octokit, context, pull_request);
+    }
 }
 
 async function applyForceMergedLabel(octokit, context, pull_request) {
@@ -9701,7 +9707,7 @@ async function applyForceMergedLabel(octokit, context, pull_request) {
     });
 }
 
-async function getAllPages(octokit, requestUrl, requestParams) {
+async function getAllPages(octokit, requestUrl, requestParams, getResponseData) {
     let response;
     let allResults = [];
     if (!requestParams) {
@@ -9710,7 +9716,13 @@ async function getAllPages(octokit, requestUrl, requestParams) {
     let page = 1;
     do {
         response = await octokit.request(requestUrl, { ...requestParams, per_page: 100, page });
-        allResults = [...allResults, ...response.data];
+        let responseData;
+        if (getResponseData) {
+            responseData = getResponseData(response);
+        } else {
+            responseData = response.data;
+        }
+        allResults = [...allResults, ...responseData];
         page = page + 1;
     } while (response.data.length === 100);
     return allResults;
